@@ -4,6 +4,7 @@
 # Original repo https://bit.ly/2yJwysL
 
 from PiicoDev_Unified_slim import *
+from utime import sleep_ms
 
 compat_str = "\nUnified PiicoDev library out of date.  Get the latest module: https://piico.dev/unified \n"
 
