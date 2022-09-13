@@ -19,7 +19,7 @@ _SET_CHARGE_PUMP = 0x8D
 WIDTH = 128
 HEIGHT = 64
 
-from PiicoDev_Unified import *
+from PiicoDev_Unified_slim import *
 
 compat_str = "\nUnified PiicoDev library out of date.  Get the latest module: https://piico.dev/unified \n"
 

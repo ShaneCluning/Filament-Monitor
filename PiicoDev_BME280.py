@@ -3,7 +3,7 @@
 # MAR 2021
 # Original repo https://bit.ly/2yJwysL
 
-from PiicoDev_Unified import *
+from PiicoDev_Unified_slim import *
 
 compat_str = "\nUnified PiicoDev library out of date.  Get the latest module: https://piico.dev/unified \n"
 
