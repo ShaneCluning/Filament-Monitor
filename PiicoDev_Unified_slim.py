@@ -4,7 +4,6 @@ i2c_err_str = (
 )
 
 from machine import I2C, Pin
-from utime import sleep_ms
 
 
 class I2CBase:

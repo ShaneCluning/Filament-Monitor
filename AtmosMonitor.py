@@ -1,4 +1,4 @@
-import time
+from time import ticks_ms, ticks_diff, ticks_add
 from PiicoDev_BME280 import PiicoDev_BME280
 
 
@@ -14,11 +14,11 @@ next_read_time = 0
 
 def checkSensorReads():
     global next_read_time
-    now = time.ticks_ms()
+    now = ticks_ms()
     try:
-        if time.ticks_diff(next_read_time, now) <= 0:
+        if ticks_diff(next_read_time, now) <= 0:
 
-            next_read_time = time.ticks_add(now, READ_DELAY)
+            next_read_time = ticks_add(now, READ_DELAY)
             readTemp()
     except Exception as err:
         print("error: %s, %s" % (str(err), str(type(err).__name__)))

@@ -1,8 +1,8 @@
 import socket
 import uselect
-import gc
-import micropython
-import machine
+from gc import collect
+from micropython import mem_info
+from machine import lightsleep, reset
 from _DataManager import getFileContents
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -27,7 +27,7 @@ def stdResponse(conn, contentType, data=None):
     if data != None:
         conn.sendall(data)
     conn.close()
-    gc.collect()
+    collect()
 
 
 def returnFile(conn, filename):
@@ -67,14 +67,14 @@ def interpretRequest(conn):
         )
         served = False
         if request_path == "RamStatus":
-            micropython.mem_info(1)
+            mem_info(1)
             stdResponse(conn, "text/plain", "OK")
             served = True
         elif request_path == "Reboot":
             stdResponse(conn, "text/plain", "OK")
             served = True
-            machine.lightsleep(1000)
-            machine.reset()
+            lightsleep(1000)
+            reset()
         else:
             for binding in SERVER_BINDINGS:
                 if binding.url == request_path:
@@ -83,7 +83,7 @@ def interpretRequest(conn):
         if not served:
             returnFile(conn, request_path)
 
-    gc.collect()
+    collect()
 
 
 def start():
@@ -100,7 +100,7 @@ def checkConnection():
             conn, addr = server.accept()
             conn.settimeout(1)
             interpretRequest(conn)
-            gc.collect()
+            collect()
     except Exception as err:
         if type(err).__name__ != "OSError":
             print(

@@ -1,13 +1,13 @@
-import json
+from json import loads, dumps
 import _ServerManager
 from ServerBinding import ServerBinding
 import _TimeManager
 import _WiFiManager
 import AtmosMonitor
-import gc
+from gc import enable, collect
 from _DataManager import getFileContents, writeFileContents
 from PiicoDev_SSD1306_slim import *
-import time
+from time import ticks_ms, ticks_diff, ticks_add
 
 NTP_Controller = _TimeManager
 Server = _ServerManager
@@ -26,13 +26,13 @@ def mainLoop():
     global Next_Screen_Update
     while True:
         try:
-            now = time.ticks_ms()
+            now = ticks_ms()
             Server.checkConnection()
             Atmos_Monitor.checkSensorReads()
             WiFi_Manager.checkWiFi()
             NTP_Controller.checkNTP()
-            if time.ticks_diff(Next_Screen_Update, now) <= 0:
-                Next_Screen_Update = time.ticks_add(now, Screen_Update_Delay)
+            if ticks_diff(Next_Screen_Update, now) <= 0:
+                Next_Screen_Update = ticks_add(now, Screen_Update_Delay)
                 updateScreen()
         except Exception as err:
             print("error: %s, %s" % (str(err), str(type(err).__name__)))
@@ -45,9 +45,9 @@ def startUp():
     loadConfig()
     Server.SERVER_BINDINGS = setupServerBindings()
     Server.start()
-    gc.enable()
-    gc.collect()
-    Next_Screen_Update = time.ticks_add(time.ticks_ms(), Screen_Update_Delay)
+    enable()
+    collect()
+    Next_Screen_Update = ticks_add(ticks_ms(), Screen_Update_Delay)
     mainLoop()
 
 
@@ -78,7 +78,7 @@ def setupServerBindings():
 
 
 def loadConfig():
-    config = json.loads(getFileContents("config.txt"))
+    config = loads(getFileContents("config.txt"))
     print("Loaded values: %s from config file: %s" % (str(config), "config.txt"))
     if "location" in config:
         Atmos_Monitor.location = config["location"]
@@ -88,7 +88,7 @@ def saveConfig():
     config_object = {
         "location": Atmos_Monitor.location,
     }
-    json_string = json.dumps(config_object)
+    json_string = dumps(config_object)
     # print("Writing config file with values: %s" % json_string)
     writeFileContents("config.txt", json_string)
 
@@ -107,7 +107,7 @@ def updateHandler(conn, url, params):
 
 
 def jsonResponseHandler(conn, object):
-    Server.stdResponse(conn, "application/json", json.dumps(object))
+    Server.stdResponse(conn, "application/json", dumps(object))
     # json_string = json.dumps(object)
     # print("Responding with: %s" % json_string)
 
