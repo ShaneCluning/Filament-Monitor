@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Temperature Monitor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        window.onload = function () {
+            getStatus();
+            setInterval(getStatus, 30000);
+        }
+
+        async function updateLocation() {
+            var newLocation = document.getElementById("newLocation").value;
+            var updateRequest = "/Update?location=" + newLocation;
+
+            console.log("Submitting request: " + updateRequest);
+            var resp = await fetch(updateRequest)
+            var respText = await resp.text();
+            console.log("Got response: " + respText);
+            document.getElementById("newLocation").value = "";
+            getStatus();
+        }
+
+
+        async function getStatus() {
+            console.log('Fetching Status');
+            var resp = await fetch("/GetData")
+            var respJSON = await resp.json();
+            var temp = respJSON.averageTemp;
+            var humid = respJSON.averageHumidity;
+            var location = respJSON.location;
+            var time = respJSON.time;
+
+            document.getElementById("Temp").innerText = temp;
+            document.getElementById("Humid").innerText = humid;
+            document.getElementById("Time").innerText = time + " UTC";
+            document.getElementById("Location").innerText = location;
+
+        }
+
+    </script>
+</head>
+
+<body style="background-color:white;">
+    <h1 style="text-align: left;"><span style="background-color: #ffffff;">Temperature Monitor</span></h1>
+    <h2 id="Location">[Location here]</h2>
+    <p>
+        Current Temp: <span id="Temp">xx</span>&deg;C<BR>
+        Current Humidity: <span id="Humid">xx</span>%<BR>
+        Data Time: <span id="Time">yyyy-mm-dd xx:xx:xx</span><BR>
+    </p>
+    Update Location: <input type="text" id="newLocation"></input><button onclick="updateLocation()"> save </button><BR>
+    </button><BR>
+</body>
+
+</html>
