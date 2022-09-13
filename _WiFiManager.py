@@ -17,7 +17,7 @@ def checkWiFi():
             next_wifi_check_time = ticks_add(now, WIFI_CHECK_DELAY)
             if not WLAN.isconnected():
                 print("connecting to network...")
-                WLAN.connect("The3Clues", "BenQ2684")
+                WLAN.connect("SSID", "PASSWORD")
                 while not WLAN.isconnected():
                     pass
     except Exception as err:
